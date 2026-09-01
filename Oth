@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTH 823 - TRAIN DRIVER LOTTERY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffd700;
+            --gold-glow: #ffaa00;
+            --red: #d62828;
+            --dark: #0f0f11;
+            --panel: #1a1a1e;
+            --border: #333339;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+        
+        body {
+            background-color: var(--dark);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .logo { font-size: 1.2rem; letter-spacing: 4px; color: var(--red); font-weight: bold; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: var(--gold); text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1100px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .wheel-section {
+            flex: 1;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .wheel-outer {
+            position: relative;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            border: 8px solid var(--gold);
+            box-shadow: 0 0 20px var(--gold-glow), inset 0 0 15px #000;
+            margin-bottom: 20px;
+        }
+
+        .pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid var(--red);
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px #000);
+        }
+
+        canvas { width: 100%; height: 100%; border-radius: 50%; }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-group { display: flex; gap: 8px; }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            background: #000;
+            border: 1px solid var(--border);
+            color: #fff;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--red);
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), var(--gold-glow));
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            padding: 15px;
+            width: 100%;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .player-list-header { display: flex; justify-content: space-between; align-items: center; }
+        .player-list {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            background: #111;
+            border-radius: 4px;
+            padding: 5px;
+        }
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-bottom: 1px solid #222;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background: var(--panel);
+            border: 2px solid var(--gold);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 30px var(--gold-glow);
+            animation: flash 0.5s infinite alternate;
+        }
+
+        @keyframes flash {
+            from { box-shadow: 0 0 20px var(--gold-glow); }
+            to { box-shadow: 0 0 40px var(--red); }
+        }
+
+        .winner-title { font-size: 1.5rem; color: var(--red); }
+        .winner-name { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--gold); margin: 15px 0; }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+        // Firebase Config ของโปรเจกต์ OTHtrain823
+        const firebaseConfig = {
+            apiKey: "AIzaSyBc32shG54kLa0W-FemFIMD4H4QM1THUdg",
+            authDomain: "othtrain823.firebaseapp.com",
+            databaseURL: "https://othtrain823-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "othtrain823",
+            storageBucket: "othtrain823.firebasestorage.app",
+            messagingSenderId: "265047455069",
+            appId: "1:265047455069:web:3568393e3c4dc2d679a4b4",
+            measurementId: "G-8NGGL98Q0Z"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const playersRef = ref(db, 'players');
+
+        let playersMap = {};
+        let playersKeys = [];
+        let playersNames = [];
+        let currentAngle = 0;
+        let isSpinning = false;
+        let lastWinnerKey = null;
+
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const colors = ['#d62828', '#ffd700', '#1a1a1e', '#ffaa00', '#333339'];
+
+        onValue(playersRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            playersMap = data;
+            playersKeys = Object.keys(data);
+            playersNames = Object.values(data);
+            
+            updateUI();
+        });
+
+        function updateUI() {
+            document.getElementById('playerCount').innerText = playersNames.length;
+            const listEl = document.getElementById('playerList');
+            listEl.innerHTML = '';
+            
+            playersKeys.forEach((key) => {
+                listEl.innerHTML += `
+                    <div class="player-item">
+                        <span>${playersMap[key]}</span>
+                        <button style="background:none; border:none; color:var(--red); cursor:pointer;" onclick="window.removePlayer('${key}')">✕</button>
+                    </div>
+                `;
+            });
+            drawWheel();
+        }
+
+        window.addPlayer = function() {
+            const input = document.getElementById('nameInput');
+            const name = input.value.trim();
+            if (name) {
+                if (playersNames.includes(name)) {
+                    alert('Name already exists!');
+                    return;
+                }
+                const newRef = ref(db, 'players/' + Date.now());
+                set(newRef, name);
+                input.value = '';
+            }
+        };
+
+        window.removePlayer = function(key) {
+            remove(ref(db, 'players/' + key));
+        };
+
+        window.clearAll = function() {
+            if (confirm("Clear all players?")) {
+                remove(playersRef);
+            }
+        };
+
+        function drawWheel() {
+            const numOptions = playersNames.length;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = canvas.width / 2;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (numOptions === 0) {
+                ctx.fillStyle = '#333';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fill();
+                return;
+            }
+
+            const arcSize = (2 * Math.PI) / numOptions;
+
+            for (let i = 0; i < numOptions; i++) {
+                const angle = currentAngle + i * arcSize;
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
+                ctx.lineTo(centerX, centerY);
+                ctx.fill();
+
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle + arcSize / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = (colors[i % colors.length] === '#ffd700') ? '#000' : '#fff';
+                ctx.font = "bold 14px Rajdhani";
+                ctx.fillText(playersNames[i], radius - 15, 5);
+                ctx.restore();
+            }
+        }
+
+        window.spin = function() {
+            if (isSpinning || playersNames.length === 0) return;
+            isSpinning = true;
+
+            const spinAngle = Math.floor(Math.random() * 360) + 1440;
+            const duration = 4000;
+            const start = performance.now();
+
+            function animate(time) {
+                let elapsed = time - start;
+                let progress = Math.min(elapsed / duration, 1);
+                let easeOut = 1 - Math.pow(1 - progress, 3);
+
+                currentAngle = (easeOut * (spinAngle * Math.PI / 180)) % (2 * Math.PI);
+                drawWheel();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    determineWinner();
+                }
+            }
+            requestAnimationFrame(animate);
+        };
+
+        function determineWinner() {
+            const numOptions = playersNames.length;
+            const arcSize = (2 * Math.PI) / numOptions;
+            
+            let normalizedAngle = (1.5 * Math.PI - currentAngle) % (2 * Math.PI);
+            if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
+
+            const winIndex = Math.floor(normalizedAngle / arcSize);
+            lastWinnerKey = playersKeys[winIndex];
+
+            document.getElementById('winnerName').innerText = playersNames[winIndex];
+            document.getElementById('winnerModal').style.display = 'flex';
+        }
+
+        window.closeModal = function() {
+            document.getElementById('winnerModal').style.display = 'none';
+        };
+
+        window.removeWinner = function() {
+            if (lastWinnerKey) {
+                window.removePlayer(lastWinnerKey);
+                window.closeModal();
+            }
+        };
+    </script>
+</head>
+<body>
+
+    <header>
+        <div class="logo">🚂 OTH 823</div>
+        <h1>TRAIN DRIVER LOTTERY</h1>
+    </header>
+
+    <div class="main-container">
+        <div class="wheel-section">
+            <div class="wheel-outer">
+                <div class="pointer"></div>
+                <canvas id="wheel" width="340" height="340"></canvas>
+            </div>
+            <button class="btn-gold" id="spinBtn" onclick="spin()">SPIN THE WHEEL</button>
+        </div>
+
+        <div class="panel">
+            <div class="input-group">
+                <input type="text" id="nameInput" placeholder="Enter player name...">
+                <button onclick="addPlayer()">JOIN THE DRAW</button>
+            </div>
+
+            <div class="player-list-header">
+                <h3>PLAYERS (<span id="playerCount">0</span>)</h3>
+                <div>
+                    <button style="padding:4px 8px; font-size:0.8rem;" onclick="clearAll()">CLEAR ALL</button>
+                </div>
+            </div>
+
+            <div class="player-list" id="playerList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="winnerModal">
+        <div class="modal-content">
+            <div class="winner-title">🏆 WINNER 🏆</div>
+            <div class="winner-name" id="winnerName">PLAYER NAME</div>
+            <div class="modal-btns">
+                <button onclick="closeModal()">SPIN AGAIN</button>
+                <button onclick="removeWinner()" style="background:var(--gold); color:#000;">REMOVE WINNER</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
