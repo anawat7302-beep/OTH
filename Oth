@@ -1,390 +1,927 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTH 823 - TRAIN DRIVER LOTTERY</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --gold: #ffd700;
-            --gold-glow: #ffaa00;
-            --red: #d62828;
-            --dark: #0f0f11;
-            --panel: #1a1a1e;
-            --border: #333339;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTH | วงล้อสุ่ม</title>
+  <meta name="description" content="OTH วงล้อสุ่มรายชื่อ ใช้งานฟรี ไม่ต้องสมัครสมาชิก" />
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(18, 32, 52, 0.84);
+      --panel-2: #132844;
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #f4f8ff;
+      --muted: #9aabc2;
+      --primary: #36d399;
+      --primary-dark: #1caa73;
+      --danger: #ff6685;
+      --shadow: 0 18px 55px rgba(0, 0, 0, 0.34);
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
-        
-        body {
-            background-color: var(--dark);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(54, 211, 153, 0.15), transparent 28rem),
+        radial-gradient(circle at 85% 80%, rgba(68, 137, 255, 0.16), transparent 32rem),
+        var(--bg);
+    }
 
-        .logo { font-size: 1.2rem; letter-spacing: 4px; color: var(--red); font-weight: bold; }
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: var(--gold); text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    button,
+    textarea,
+    input {
+      font: inherit;
+    }
 
-        .main-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            max-width: 1100px;
-            width: 100%;
-            justify-content: center;
-        }
+    button {
+      border: 0;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+    }
 
-        .wheel-section {
-            flex: 1;
-            min-width: 320px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-        }
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
 
-        .wheel-outer {
-            position: relative;
-            width: 340px;
-            height: 340px;
-            border-radius: 50%;
-            border: 8px solid var(--gold);
-            box-shadow: 0 0 20px var(--gold-glow), inset 0 0 15px #000;
-            margin-bottom: 20px;
-        }
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
 
-        .pointer {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 25px solid var(--red);
-            z-index: 10;
-            filter: drop-shadow(0 2px 4px #000);
-        }
+    .app {
+      width: min(1200px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+    }
 
-        canvas { width: 100%; height: 100%; border-radius: 50%; }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 26px;
+    }
 
-        .panel {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            flex: 1;
-            min-width: 300px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .input-group { display: flex; gap: 8px; }
-        input[type="text"] {
-            flex: 1;
-            padding: 10px;
-            background: #000;
-            border: 1px solid var(--border);
-            color: #fff;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      color: #062016;
+      font-weight: 900;
+      letter-spacing: -1px;
+      background: var(--primary);
+      box-shadow: 0 10px 28px rgba(54, 211, 153, 0.27);
+    }
 
-        button {
-            background: var(--red);
-            color: #fff;
-            border: none;
-            padding: 10px 16px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 4px;
-            text-transform: uppercase;
-            transition: 0.2s;
-        }
-        button:hover { opacity: 0.9; }
+    .brand h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      line-height: 1.1;
+    }
 
-        .btn-gold {
-            background: linear-gradient(135deg, var(--gold), var(--gold-glow));
-            color: #000;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            padding: 15px;
-            width: 100%;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-        }
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
 
-        .player-list-header { display: flex; justify-content: space-between; align-items: center; }
-        .player-list {
-            max-height: 250px;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-            background: #111;
-            border-radius: 4px;
-            padding: 5px;
-        }
-        .player-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 10px;
-            border-bottom: 1px solid #222;
-        }
+    .status {
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.04);
+    }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-        .modal-content {
-            background: var(--panel);
-            border: 2px solid var(--gold);
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 0 30px var(--gold-glow);
-            animation: flash 0.5s infinite alternate;
-        }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(330px, 0.75fr);
+      gap: 22px;
+    }
 
-        @keyframes flash {
-            from { box-shadow: 0 0 20px var(--gold-glow); }
-            to { box-shadow: 0 0 40px var(--red); }
-        }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
 
-        .winner-title { font-size: 1.5rem; color: var(--red); }
-        .winner-name { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--gold); margin: 15px 0; }
-        .modal-btns { display: flex; gap: 10px; justify-content: center; }
-    </style>
+    .wheel-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 650px;
+      padding: 26px;
+    }
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+    .wheel-heading {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
 
-        // Firebase Config ของโปรเจกต์ OTHtrain823
-        const firebaseConfig = {
-            apiKey: "AIzaSyBc32shG54kLa0W-FemFIMD4H4QM1THUdg",
-            authDomain: "othtrain823.firebaseapp.com",
-            databaseURL: "https://othtrain823-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "othtrain823",
-            storageBucket: "othtrain823.firebasestorage.app",
-            messagingSenderId: "265047455069",
-            appId: "1:265047455069:web:3568393e3c4dc2d679a4b4",
-            measurementId: "G-8NGGL98Q0Z"
-        };
+    .wheel-heading h2,
+    .side-card h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const playersRef = ref(db, 'players');
+    .count {
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
 
-        let playersMap = {};
-        let playersKeys = [];
-        let playersNames = [];
-        let currentAngle = 0;
-        let isSpinning = false;
-        let lastWinnerKey = null;
+    .wheel-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: min(100%, 530px);
+      aspect-ratio: 1;
+      margin: 10px auto 20px;
+    }
 
-        const canvas = document.getElementById('wheel');
-        const ctx = canvas.getContext('2d');
-        const colors = ['#d62828', '#ffd700', '#1a1a1e', '#ffaa00', '#333339'];
+    canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.28));
+    }
 
-        onValue(playersRef, (snapshot) => {
-            const data = snapshot.val() || {};
-            playersMap = data;
-            playersKeys = Object.keys(data);
-            playersNames = Object.values(data);
-            
-            updateUI();
-        });
+    .pointer {
+      position: absolute;
+      z-index: 2;
+      top: -2px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform: translateX(-50%);
+      border-right: 18px solid transparent;
+      border-left: 18px solid transparent;
+      border-top: 36px solid #ffffff;
+      filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.35));
+    }
 
-        function updateUI() {
-            document.getElementById('playerCount').innerText = playersNames.length;
-            const listEl = document.getElementById('playerList');
-            listEl.innerHTML = '';
-            
-            playersKeys.forEach((key) => {
-                listEl.innerHTML += `
-                    <div class="player-item">
-                        <span>${playersMap[key]}</span>
-                        <button style="background:none; border:none; color:var(--red); cursor:pointer;" onclick="window.removePlayer('${key}')">✕</button>
-                    </div>
-                `;
-            });
-            drawWheel();
-        }
+    .hub {
+      position: absolute;
+      display: grid;
+      z-index: 2;
+      place-items: center;
+      width: 82px;
+      height: 82px;
+      border: 7px solid rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      color: #0a1624;
+      font-size: 0.8rem;
+      font-weight: 900;
+      background: var(--primary);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+    }
 
-        window.addPlayer = function() {
-            const input = document.getElementById('nameInput');
-            const name = input.value.trim();
-            if (name) {
-                if (playersNames.includes(name)) {
-                    alert('Name already exists!');
-                    return;
-                }
-                const newRef = ref(db, 'players/' + Date.now());
-                set(newRef, name);
-                input.value = '';
-            }
-        };
+    .spin-button {
+      width: min(100%, 390px);
+      padding: 16px 22px;
+      border-radius: 14px;
+      color: #062016;
+      font-weight: 900;
+      font-size: 1.05rem;
+      background: var(--primary);
+      box-shadow: 0 10px 24px rgba(54, 211, 153, 0.23);
+    }
 
-        window.removePlayer = function(key) {
-            remove(ref(db, 'players/' + key));
-        };
+    .spin-button:hover:not(:disabled) {
+      background: #57e6ad;
+    }
 
-        window.clearAll = function() {
-            if (confirm("Clear all players?")) {
-                remove(playersRef);
-            }
-        };
+    .hint {
+      margin: 13px 0 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.82rem;
+    }
 
-        function drawWheel() {
-            const numOptions = playersNames.length;
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = canvas.width / 2;
+    .side-card {
+      padding: 22px;
+    }
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+    .side-card + .side-card {
+      margin-top: 18px;
+    }
 
-            if (numOptions === 0) {
-                ctx.fillStyle = '#333';
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-                ctx.fill();
-                return;
-            }
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
 
-            const arcSize = (2 * Math.PI) / numOptions;
+    textarea {
+      width: 100%;
+      min-height: 235px;
+      resize: vertical;
+      padding: 14px;
+      outline: none;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--text);
+      line-height: 1.5;
+      background: rgba(2, 10, 20, 0.38);
+    }
 
-            for (let i = 0; i < numOptions; i++) {
-                const angle = currentAngle + i * arcSize;
-                ctx.fillStyle = colors[i % colors.length];
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
-                ctx.lineTo(centerX, centerY);
-                ctx.fill();
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(54, 211, 153, 0.12);
+    }
 
-                ctx.save();
-                ctx.translate(centerX, centerY);
-                ctx.rotate(angle + arcSize / 2);
-                ctx.textAlign = "right";
-                ctx.fillStyle = (colors[i % colors.length] === '#ffd700') ? '#000' : '#fff';
-                ctx.font = "bold 14px Rajdhani";
-                ctx.fillText(playersNames[i], radius - 15, 5);
-                ctx.restore();
-            }
-        }
+    .small-note {
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 0.77rem;
+    }
 
-        window.spin = function() {
-            if (isSpinning || playersNames.length === 0) return;
-            isSpinning = true;
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
 
-            const spinAngle = Math.floor(Math.random() * 360) + 1440;
-            const duration = 4000;
-            const start = performance.now();
+    .btn {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--text);
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.06);
+    }
 
-            function animate(time) {
-                let elapsed = time - start;
-                let progress = Math.min(elapsed / duration, 1);
-                let easeOut = 1 - Math.pow(1 - progress, 3);
+    .btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
+    }
 
-                currentAngle = (easeOut * (spinAngle * Math.PI / 180)) % (2 * Math.PI);
-                drawWheel();
+    .btn.danger {
+      color: #ffb2c2;
+    }
 
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    isSpinning = false;
-                    determineWinner();
-                }
-            }
-            requestAnimationFrame(animate);
-        };
+    .settings {
+      display: grid;
+      gap: 12px;
+    }
 
-        function determineWinner() {
-            const numOptions = playersNames.length;
-            const arcSize = (2 * Math.PI) / numOptions;
-            
-            let normalizedAngle = (1.5 * Math.PI - currentAngle) % (2 * Math.PI);
-            if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: #dce8f8;
+      font-size: 0.9rem;
+    }
 
-            const winIndex = Math.floor(normalizedAngle / arcSize);
-            lastWinnerKey = playersKeys[winIndex];
+    .switch {
+      position: relative;
+      width: 47px;
+      height: 27px;
+      flex: 0 0 auto;
+    }
 
-            document.getElementById('winnerName').innerText = playersNames[winIndex];
-            document.getElementById('winnerModal').style.display = 'flex';
-        }
+    .switch input {
+      width: 0;
+      height: 0;
+      opacity: 0;
+    }
 
-        window.closeModal = function() {
-            document.getElementById('winnerModal').style.display = 'none';
-        };
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 99px;
+      cursor: pointer;
+      background: #40526a;
+      transition: 0.2s;
+    }
 
-        window.removeWinner = function() {
-            if (lastWinnerKey) {
-                window.removePlayer(lastWinnerKey);
-                window.closeModal();
-            }
-        };
-    </script>
+    .slider::before {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      content: "";
+      background: white;
+      transition: 0.2s;
+    }
+
+    input:checked + .slider {
+      background: var(--primary-dark);
+    }
+
+    input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    .history-list {
+      display: grid;
+      gap: 9px;
+      max-height: 200px;
+      overflow: auto;
+    }
+
+    .history-item,
+    .empty-history {
+      padding: 11px 12px;
+      border-radius: 11px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .history-item strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--text);
+    }
+
+    .clear-history {
+      width: 100%;
+      margin-top: 12px;
+      padding: 9px;
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      background: transparent;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      z-index: 10;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 20px;
+      background: rgba(1, 7, 14, 0.72);
+      backdrop-filter: blur(7px);
+    }
+
+    .modal-backdrop.show {
+      display: grid;
+    }
+
+    .modal {
+      width: min(100%, 400px);
+      padding: 31px 25px 25px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 24px;
+      text-align: center;
+      background: #10243c;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+      animation: pop 0.25s ease-out;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .winner-icon {
+      font-size: 3rem;
+    }
+
+    .modal p {
+      margin: 10px 0 5px;
+      color: var(--muted);
+    }
+
+    .winner-name {
+      margin: 0 0 23px;
+      overflow-wrap: anywhere;
+      color: var(--primary);
+      font-size: clamp(1.65rem, 7vw, 2.25rem);
+    }
+
+    .modal .spin-button {
+      width: 100%;
+    }
+
+    @media (max-width: 860px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .wheel-card {
+        min-height: unset;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .app {
+        width: min(100% - 22px, 1200px);
+        padding-top: 16px;
+      }
+
+      header {
+        margin-bottom: 17px;
+      }
+
+      .status {
+        display: none;
+      }
+
+      .wheel-card,
+      .side-card {
+        border-radius: 19px;
+      }
+
+      .wheel-card {
+        padding: 16px;
+      }
+
+      .side-card {
+        padding: 18px;
+      }
+
+      .pointer {
+        border-right-width: 14px;
+        border-left-width: 14px;
+        border-top-width: 29px;
+      }
+
+      .hub {
+        width: 65px;
+        height: 65px;
+        border-width: 5px;
+        font-size: 0.7rem;
+      }
+    }
+  </style>
 </head>
 <body>
-
+  <main class="app">
     <header>
-        <div class="logo">🚂 OTH 823</div>
-        <h1>TRAIN DRIVER LOTTERY</h1>
+      <div class="brand">
+        <div class="brand-mark">OTH</div>
+        <div>
+          <h1>OTH วงล้อสุ่ม</h1>
+          <p>พิมพ์ชื่อ หมุนวงล้อ แล้วรับผลได้ทันที</p>
+        </div>
+      </div>
+      <div class="status">ไม่ต้องสมัครสมาชิก • ข้อมูลอยู่ในเครื่องคุณ</div>
     </header>
 
-    <div class="main-container">
-        <div class="wheel-section">
-            <div class="wheel-outer">
-                <div class="pointer"></div>
-                <canvas id="wheel" width="340" height="340"></canvas>
-            </div>
-            <button class="btn-gold" id="spinBtn" onclick="spin()">SPIN THE WHEEL</button>
+    <section class="layout">
+      <section class="card wheel-card">
+        <div class="wheel-heading">
+          <h2>วงล้อของคุณ</h2>
+          <span id="itemCount" class="count">0 รายการ</span>
         </div>
 
-        <div class="panel">
-            <div class="input-group">
-                <input type="text" id="nameInput" placeholder="Enter player name...">
-                <button onclick="addPlayer()">JOIN THE DRAW</button>
-            </div>
-
-            <div class="player-list-header">
-                <h3>PLAYERS (<span id="playerCount">0</span>)</h3>
-                <div>
-                    <button style="padding:4px 8px; font-size:0.8rem;" onclick="clearAll()">CLEAR ALL</button>
-                </div>
-            </div>
-
-            <div class="player-list" id="playerList"></div>
+        <div class="wheel-wrap">
+          <div class="pointer"></div>
+          <canvas id="wheelCanvas" aria-label="วงล้อสุ่มรายชื่อ"></canvas>
+          <div class="hub">OTH</div>
         </div>
+
+        <button id="spinButton" class="spin-button" type="button">
+          หมุนวงล้อ
+        </button>
+        <p class="hint">เพิ่มรายการอย่างน้อย 2 รายการเพื่อเริ่มสุ่ม</p>
+      </section>
+
+      <aside>
+        <section class="card side-card">
+          <div class="section-title">
+            <h2>รายชื่อ / ตัวเลือก</h2>
+          </div>
+
+          <textarea
+            id="itemsInput"
+            placeholder="พิมพ์ 1 ชื่อต่อ 1 บรรทัด&#10;เช่น&#10;อาร์ต&#10;มิน&#10;พีท"
+          ></textarea>
+
+          <p class="small-note">ระบบจะตัดบรรทัดว่างออกให้อัตโนมัติ</p>
+
+          <div class="actions">
+            <button id="exampleButton" class="btn" type="button">ใส่ตัวอย่าง</button>
+            <button id="clearItemsButton" class="btn danger" type="button">ล้างทั้งหมด</button>
+          </div>
+        </section>
+
+        <section class="card side-card">
+          <div class="section-title">
+            <h2>การตั้งค่า</h2>
+          </div>
+
+          <div class="settings">
+            <div class="setting-row">
+              <span>ลบผู้ชนะออกหลังสุ่ม</span>
+              <label class="switch">
+                <input id="removeWinner" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <span>เปิดเสียงตอนประกาศผล</span>
+              <label class="switch">
+                <input id="soundEnabled" type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section class="card side-card">
+          <div class="section-title">
+            <h2>ประวัติผลการสุ่ม</h2>
+          </div>
+
+          <div id="historyList" class="history-list"></div>
+          <button id="clearHistoryButton" class="clear-history" type="button">ล้างประวัติ</button>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <div id="resultModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="winner-icon">🎉</div>
+      <p>ผู้ที่ถูกสุ่มได้คือ</p>
+      <h2 id="winnerName" class="winner-name">-</h2>
+      <button id="spinAgainButton" class="spin-button" type="button">หมุนอีกครั้ง</button>
     </div>
+  </div>
 
-    <div class="modal" id="winnerModal">
-        <div class="modal-content">
-            <div class="winner-title">🏆 WINNER 🏆</div>
-            <div class="winner-name" id="winnerName">PLAYER NAME</div>
-            <div class="modal-btns">
-                <button onclick="closeModal()">SPIN AGAIN</button>
-                <button onclick="removeWinner()" style="background:var(--gold); color:#000;">REMOVE WINNER</button>
-            </div>
+  <script>
+    const STORAGE_KEYS = {
+      items: "oth-wheel-items",
+      settings: "oth-wheel-settings",
+      history: "oth-wheel-history"
+    };
+
+    const colors = [
+      "#ff6b6b", "#f59e0b", "#facc15", "#84cc16",
+      "#22c55e", "#14b8a6", "#06b6d4", "#3b82f6",
+      "#6366f1", "#8b5cf6", "#d946ef", "#ec4899"
+    ];
+
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+    const itemsInput = document.getElementById("itemsInput");
+    const itemCount = document.getElementById("itemCount");
+    const spinButton = document.getElementById("spinButton");
+    const removeWinner = document.getElementById("removeWinner");
+    const soundEnabled = document.getElementById("soundEnabled");
+    const historyList = document.getElementById("historyList");
+    const resultModal = document.getElementById("resultModal");
+    const winnerName = document.getElementById("winnerName");
+
+    let rotation = 0;
+    let isSpinning = false;
+    let history = [];
+    let audioContext = null;
+
+    function getItems() {
+      return itemsInput.value
+        .split("\n")
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    function saveItems() {
+      localStorage.setItem(STORAGE_KEYS.items, itemsInput.value);
+    }
+
+    function saveSettings() {
+      localStorage.setItem(
+        STORAGE_KEYS.settings,
+        JSON.stringify({
+          removeWinner: removeWinner.checked,
+          soundEnabled: soundEnabled.checked
+        })
+      );
+    }
+
+    function saveHistory() {
+      localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(history));
+    }
+
+    function updateInterface() {
+      const items = getItems();
+      itemCount.textContent = `${items.length} รายการ`;
+      spinButton.disabled = isSpinning || items.length < 2;
+      drawWheel();
+      saveItems();
+    }
+
+    function resizeCanvas() {
+      const size = Math.floor(canvas.getBoundingClientRect().width);
+      const pixelRatio = window.devicePixelRatio || 1;
+
+      canvas.width = size * pixelRatio;
+      canvas.height = size * pixelRatio;
+      ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+      drawWheel();
+    }
+
+    function truncateText(text, maxLength) {
+      return text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
+    }
+
+    function drawWheel() {
+      const items = getItems();
+      const size = canvas.getBoundingClientRect().width;
+      if (!size) return;
+
+      const center = size / 2;
+      const radius = center - 6;
+
+      ctx.clearRect(0, 0, size, size);
+
+      if (!items.length) {
+        ctx.beginPath();
+        ctx.arc(center, center, radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#1b3451";
+        ctx.fill();
+
+        ctx.fillStyle = "#9aabc2";
+        ctx.font = "600 17px system-ui";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("เพิ่มรายชื่อเพื่อเริ่มต้น", center, center);
+        return;
+      }
+
+      const arc = (Math.PI * 2) / items.length;
+
+      ctx.save();
+      ctx.translate(center, center);
+      ctx.rotate(rotation);
+
+      items.forEach((item, index) => {
+        const startAngle = index * arc;
+        const endAngle = startAngle + arc;
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = colors[index % colors.length];
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255,255,255,0.8)";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        const middleAngle = startAngle + arc / 2;
+        const textRadius = radius * 0.64;
+        const fontSize = Math.max(10, Math.min(18, 21 - items.length * 0.32));
+
+        ctx.save();
+        ctx.rotate(middleAngle);
+        ctx.translate(textRadius, 0);
+
+        const upsideDown = middleAngle > Math.PI / 2 && middleAngle < Math.PI * 1.5;
+        if (upsideDown) ctx.rotate(Math.PI);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.shadowColor = "rgba(0,0,0,0.4)";
+        ctx.shadowBlur = 3;
+        ctx.font = `800 ${fontSize}px system-ui`;
+        ctx.textAlign = upsideDown ? "right" : "left";
+        ctx.textBaseline = "middle";
+
+        const availableLength = items.length > 14 ? 9 : items.length > 8 ? 13 : 18;
+        ctx.fillText(truncateText(item, availableLength), 0, 0);
+        ctx.restore();
+      });
+
+      ctx.restore();
+
+      ctx.beginPath();
+      ctx.arc(center, center, radius, 0, Math.PI * 2);
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "rgba(255,255,255,0.9)";
+      ctx.stroke();
+    }
+
+    function playWinnerSound() {
+      if (!soundEnabled.checked) return;
+
+      try {
+        audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioContext.currentTime;
+
+        [0, 0.12, 0.24].forEach((delay, index) => {
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.frequency.value = [523.25, 659.25, 783.99][index];
+          gain.gain.setValueAtTime(0.001, now + delay);
+          gain.gain.exponentialRampToValueAtTime(0.12, now + delay + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.25);
+
+          oscillator.start(now + delay);
+          oscillator.stop(now + delay + 0.26);
+        });
+      } catch (error) {
+        // หากเบราว์เซอร์ไม่รองรับเสียง ระบบยังทำงานปกติ
+      }
+    }
+
+    function addHistory(winner) {
+      history.unshift({
+        name: winner,
+        time: new Date().toLocaleString("th-TH", {
+          dateStyle: "short",
+          timeStyle: "short"
+        })
+      });
+
+      history = history.slice(0, 30);
+      saveHistory();
+      renderHistory();
+    }
+
+    function renderHistory() {
+      if (!history.length) {
+        historyList.innerHTML = '<div class="empty-history">ยังไม่มีผลการสุ่ม</div>';
+        return;
+      }
+
+      historyList.innerHTML = history.map(item => `
+        <div class="history-item">
+          <strong>${escapeHtml(item.name)}</strong>
+          <span>${escapeHtml(item.time)}</span>
         </div>
-    </div>
+      `).join("");
+    }
 
+    function escapeHtml(value) {
+      const div = document.createElement("div");
+      div.textContent = value;
+      return div.innerHTML;
+    }
+
+    function showWinner(winner) {
+      winnerName.textContent = winner;
+      resultModal.classList.add("show");
+      playWinnerSound();
+    }
+
+    function removeOneItem(winner) {
+      const lines = itemsInput.value.split("\n");
+      const index = lines.findIndex(line => line.trim() === winner);
+
+      if (index !== -1) {
+        lines.splice(index, 1);
+        itemsInput.value = lines.filter(line => line.trim()).join("\n");
+        updateInterface();
+      }
+    }
+
+    function spinWheel() {
+      const items = getItems();
+      if (isSpinning || items.length < 2) return;
+
+      isSpinning = true;
+      spinButton.disabled = true;
+
+      const winnerIndex = Math.floor(Math.random() * items.length);
+      const winner = items[winnerIndex];
+      const arc = (Math.PI * 2) / items.length;
+      const pointerAngle = -Math.PI / 2;
+
+      // หมุนให้จุดกึ่งกลางของช่องผู้ชนะมาตรงกับเข็มด้านบน
+      const winningRotation = pointerAngle - (winnerIndex + 0.5) * arc;
+      const fullTurns = (7 + Math.floor(Math.random() * 3)) * Math.PI * 2;
+      const currentNormalized = ((rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+      const targetNormalized = ((winningRotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+      const extraRotation = (targetNormalized - currentNormalized + Math.PI * 2) % (Math.PI * 2);
+      const startRotation = rotation;
+      const targetRotation = rotation + fullTurns + extraRotation;
+      const duration = 5200;
+      const startTime = performance.now();
+
+      function animate(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 4);
+
+        rotation = startRotation + (targetRotation - startRotation) * easeOut;
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+          return;
+        }
+
+        rotation = targetRotation % (Math.PI * 2);
+        isSpinning = false;
+        updateInterface();
+        addHistory(winner);
+
+        if (removeWinner.checked) {
+          removeOneItem(winner);
+        }
+
+        showWinner(winner);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function loadSavedData() {
+      const savedItems = localStorage.getItem(STORAGE_KEYS.items);
+      const savedSettings = localStorage.getItem(STORAGE_KEYS.settings);
+      const savedHistory = localStorage.getItem(STORAGE_KEYS.history);
+
+      if (savedItems) {
+        itemsInput.value = savedItems;
+      }
+
+      if (savedSettings) {
+        try {
+          const settings = JSON.parse(savedSettings);
+          removeWinner.checked = Boolean(settings.removeWinner);
+          soundEnabled.checked = settings.soundEnabled !== false;
+        } catch (error) {}
+      }
+
+      if (savedHistory) {
+        try {
+          history = JSON.parse(savedHistory);
+        } catch (error) {
+          history = [];
+        }
+      }
+
+      renderHistory();
+      updateInterface();
+    }
+
+    itemsInput.addEventListener("input", updateInterface);
+    spinButton.addEventListener("click", spinWheel);
+
+    document.getElementById("exampleButton").addEventListener("click", () => {
+      itemsInput.value = "อาร์ต\nมิน\nพีท\nฟ้า\nนัท\nบีม";
+      updateInterface();
+    });
+
+    document.getElementById("clearItemsButton").addEventListener("click", () => {
+      if (!itemsInput.value || confirm("ต้องการล้างรายชื่อทั้งหมดใช่หรือไม่?")) {
+        itemsInput.value = "";
+        updateInterface();
+      }
+    });
+
+    document.getElementById("clearHistoryButton").addEventListener("click", () => {
+      if (!history.length || confirm("ต้องการล้างประวัติผลการสุ่มใช่หรือไม่?")) {
+        history = [];
+        saveHistory();
+        renderHistory();
+      }
+    });
+
+    removeWinner.addEventListener("change", saveSettings);
+    soundEnabled.addEventListener("change", saveSettings);
+
+    document.getElementById("spinAgainButton").addEventListener("click", () => {
+      resultModal.classList.remove("show");
+      setTimeout(spinWheel, 150);
+    });
+
+    resultModal.addEventListener("click", event => {
+      if (event.target === resultModal) {
+        resultModal.classList.remove("show");
+      }
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+
+    loadSavedData();
+    resizeCanvas();
+  </script>
 </body>
 </html>
